@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/greggsoft/develop/greggsoft/greggsoft.github.io/venv/bin/python
 """
 Convert an HTML file to PDF using Playwright/Chromium.
 
@@ -7,13 +7,21 @@ Install:
     playwright install chromium
 
 Usage:
-    python html_to_pdf.py resume.html resume.pdf
+    ./venv/bin/python html_to_pdf.py resume.html resume.pdf
 """
 
 import argparse
 import asyncio
+import os
 from pathlib import Path
 from playwright.async_api import async_playwright
+
+
+CHROMIUM_PATHS = (
+    os.environ.get("CHROMIUM_PATH"),
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+)
 
 
 async def convert(input_html: str, output_pdf: str) -> None:
@@ -25,8 +33,14 @@ async def convert(input_html: str, output_pdf: str) -> None:
 
     pdf_file.parent.mkdir(parents=True, exist_ok=True)
 
+    chromium_path = next((path for path in CHROMIUM_PATHS if path and Path(path).exists()), None)
+    if chromium_path is None:
+        raise RuntimeError(
+            "Chromium не найден. Укажите путь через CHROMIUM_PATH или установите Chromium."
+        )
+
     async with async_playwright() as p:
-        browser = await p.chromium.launch(executable_path="/usr/bin/chromium")
+        browser = await p.chromium.launch(executable_path=chromium_path)
         page = await browser.new_page()
         await page.goto(html_file.as_uri(), wait_until="networkidle")
 

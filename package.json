@@ -6,6 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "http-server -a 127.0.0.1 -c-1 dist",
+    "pdf:fullstack": "./venv/bin/python html_to_pdf.py dist/resume-fullstack.html dist/mikhail_menshenin_fullstack_resume.pdf",
+    "pdf:gamedev": "./venv/bin/python html_to_pdf.py dist/resume.html dist/mikhail_menshenin_typescript_gamedev_resume.pdf",
+    "pdf": "npm run pdf:fullstack && npm run pdf:gamedev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
